@@ -1,6 +1,7 @@
 window.addEventListener("DOMContentLoaded", init);
 
 function init() {
+  showLoadingScreen();
   // レンダラーを作成
   const canvasElement = document.querySelector("#myCanvas");
   const renderer = new THREE.WebGLRenderer({
@@ -52,6 +53,8 @@ function init() {
 
     texture.dispose();
     pmremGenerator.dispose();
+    envMapLoaded = true;
+    checkLoadingStatus();
   });
 
   const loader = new THREE.GLTFLoader();
@@ -63,13 +66,19 @@ function init() {
       model.scale.set(50.0, 50.0, 50.0);
       model.position.set(0, -200, 0);
       scene.add(model);
+      modelLoaded = true;
+      checkLoadingStatus();
     },
     undefined,
     function (error) {
       console.error(error);
     }
   );
-
+  function checkLoadingStatus() {
+    if (envMapLoaded && modelLoaded) {
+      hideLoadingScreen(); // Hide loading screen once both are loaded
+    }
+  }
   const particleCount = 2000;
   const particlesGeometry = new THREE.BufferGeometry();
   const particlesMaterial = new THREE.PointsMaterial({
@@ -169,5 +178,12 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight * 0.9);
     camera.aspect = window.innerWidth / (window.innerHeight * 0.9);
     camera.updateProjectionMatrix();
+  }
+  function showLoadingScreen() {
+    document.getElementById("loadingScreen").style.display = "flex";
+  }
+
+  function hideLoadingScreen() {
+    document.getElementById("loadingScreen").style.display = "none";
   }
 }
