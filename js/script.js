@@ -47,6 +47,8 @@ function init() {
 
   // 環境マップの読み込み
   const exrLoader = new THREE.EXRLoader();
+  let envMapLoaded = false;
+  let modelLoaded = false;
   exrLoader.load("./goegap_road_4k.exr", function (texture) {
     const envMap = pmremGenerator.fromEquirectangular(texture).texture;
     scene.environment = envMap;
