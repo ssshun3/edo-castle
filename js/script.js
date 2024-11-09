@@ -139,12 +139,12 @@ function init() {
     const totalSeasons = 4;
     const currentSeason = Math.floor((time / seasonDuration) % totalSeasons);
 
-    // Season color settings
+    // 各季節の設定
     const seasonColors = [
-      { background: 0xa1c4fd, particle: 0xffc0cb },
-      { background: 0x87ceeb, particle: 0x00ff00 },
-      { background: 0xe0d5c0, particle: 0xa0522d },
-      { background: 0x1c1c1c, particle: 0xffffff },
+      { background: 0xbff6f9, particle: 0xff68c3 }, // 春: 青空と桜色
+      { background: 0x18f1ff, particle: 0x07e102 }, // 夏: 青空と緑色
+      { background: 0xe0d5c0, particle: 0xa0522d }, // 秋: 茶色背景と紅葉
+      { background: 0x1c1c1c, particle: 0xffffff }, // 冬: 暗い空と白い雪
     ];
 
     const nextSeason = (currentSeason + 1) % totalSeasons;
