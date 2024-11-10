@@ -103,8 +103,6 @@ function init() {
   // Load all assets
   Promise.all([loadEnvironmentMap(), loadModel()])
     .then(() => {
-      // アセットのロードが完了したら初期化処理を続行
-      setupParticles();
       tick();
     })
     .catch((error) => {
