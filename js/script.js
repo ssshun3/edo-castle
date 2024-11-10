@@ -38,7 +38,8 @@ function init() {
   controls.dampingFactor = 0.2;
   controls.minDistance = 200;
   controls.maxDistance = 700;
-  controls.enableZoom = false;
+  // zoom切り替え
+  controls.enableZoom = true;
   // 垂直回転を制限 (カメラが裏側に回らないように制限)
   // controls.minPolarAngle = 0; // 上方向の制限（真上を見ない）
   // controls.maxPolarAngle = Math.PI / 2; // 下方向の制限（裏側を見ない）
