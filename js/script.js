@@ -5,6 +5,7 @@ function init() {
   const loadingOverlay = document.getElementById("loading-overlay");
   const loadingProgress = document.querySelector(".loading-progress");
 
+  // 統合されたローディング管理
   loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
     const progress = (itemsLoaded / itemsTotal) * 100;
     loadingProgress.textContent = `${Math.floor(progress)}%`;
@@ -12,6 +13,10 @@ function init() {
 
   loadingManager.onLoad = () => {
     loadingOverlay.style.display = "none";
+  };
+
+  loadingManager.onError = (url) => {
+    console.error("Error loading:", url);
   };
   // レンダラーを作成
   const canvasElement = document.querySelector("#myCanvas");
@@ -58,37 +63,53 @@ function init() {
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
   pmremGenerator.compileEquirectangularShader();
 
-  // 環境マップの読み込み
-  const exrLoader = new THREE.EXRLoader(loadingManager);
-  exrLoader.load("./goegap_road_4k.exr", function (texture) {
-    const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-    scene.environment = envMap;
+  function loadEnvironmentMap() {
+    return new Promise((resolve, reject) => {
+      const exrLoader = new THREE.EXRLoader(loadingManager);
+      exrLoader.load(
+        "./goegap_road_4k.exr",
+        (texture) => {
+          const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+          scene.environment = envMap;
+          texture.dispose();
+          pmremGenerator.dispose();
+          resolve();
+        },
+        undefined,
+        reject
+      );
+    });
+  }
 
-    texture.dispose();
-    pmremGenerator.dispose();
-  });
+  function loadModel() {
+    return new Promise((resolve, reject) => {
+      const loader = new THREE.GLTFLoader(loadingManager);
+      loader.load(
+        "./edo-castle.glb",
+        (glb) => {
+          const model = glb.scene;
+          model.name = "model_castle";
+          model.scale.set(50.0, 50.0, 50.0);
+          model.position.set(0, -200, 0);
+          scene.add(model);
+          resolve();
+        },
+        undefined,
+        reject
+      );
+    });
+  }
 
-  const loader = new THREE.GLTFLoader(loadingManager);
-  loader.load(
-    "./edo-castle.glb",
-    function (glb) {
-      const model = glb.scene;
-      model.name = "model_castle";
-      model.scale.set(50.0, 50.0, 50.0);
-      model.position.set(0, -200, 0);
-      scene.add(model);
-    },
-    // プログレス表示を追加
-    function (xhr) {
-      if (xhr.lengthComputable) {
-        const progress = (xhr.loaded / xhr.total) * 100;
-        loadingProgress.textContent = `${Math.floor(progress)}%`;
-      }
-    },
-    function (error) {
-      console.error(error);
-    }
-  );
+  // Load all assets
+  Promise.all([loadEnvironmentMap(), loadModel()])
+    .then(() => {
+      // アセットのロードが完了したら初期化処理を続行
+      setupParticles();
+      tick();
+    })
+    .catch((error) => {
+      console.error("Loading error:", error);
+    });
 
   const particleCount = 2000;
   const particlesGeometry = new THREE.BufferGeometry();
