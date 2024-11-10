@@ -1,19 +1,6 @@
 window.addEventListener("DOMContentLoaded", init);
 
 function init() {
-  const loadingElement = document.createElement("div");
-  loadingElement.id = "loading";
-  loadingElement.style.position = "absolute";
-  loadingElement.style.top = "50%";
-  loadingElement.style.left = "50%";
-  loadingElement.style.transform = "translate(-50%, -50%)";
-  loadingElement.style.fontSize = "24px";
-  loadingElement.style.color = "#ffffff";
-  loadingElement.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
-  loadingElement.style.padding = "20px";
-  loadingElement.style.borderRadius = "10px";
-  loadingElement.innerText = "Loading...";
-  document.body.appendChild(loadingElement);
   // レンダラーを作成
   const canvasElement = document.querySelector("#myCanvas");
   const renderer = new THREE.WebGLRenderer({
@@ -78,13 +65,8 @@ function init() {
       model.scale.set(50.0, 50.0, 50.0);
       model.position.set(0, -200, 0);
       scene.add(model);
-      loadingElement.style.display = "none"; // ロード完了で非表示
     },
-    function (xhr) {
-      // ロードの進行状況
-      const progress = (xhr.loaded / xhr.total) * 100;
-      loadingElement.innerText = `Loading... ${Math.round(progress)}%`;
-    },
+    undefined,
     function (error) {
       console.error(error);
     }
