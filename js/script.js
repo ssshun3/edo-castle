@@ -1,6 +1,18 @@
 window.addEventListener("DOMContentLoaded", init);
 
 function init() {
+  const loadingManager = new THREE.LoadingManager();
+  const loadingOverlay = document.getElementById("loading-overlay");
+  const loadingProgress = document.querySelector(".loading-progress");
+
+  loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+    const progress = (itemsLoaded / itemsTotal) * 100;
+    loadingProgress.textContent = `${Math.floor(progress)}%`;
+  };
+
+  loadingManager.onLoad = () => {
+    loadingOverlay.style.display = "none";
+  };
   // レンダラーを作成
   const canvasElement = document.querySelector("#myCanvas");
   const renderer = new THREE.WebGLRenderer({
@@ -47,7 +59,7 @@ function init() {
   pmremGenerator.compileEquirectangularShader();
 
   // 環境マップの読み込み
-  const exrLoader = new THREE.EXRLoader();
+  const exrLoader = new THREE.EXRLoader(loadingManager);
   exrLoader.load("./goegap_road_4k.exr", function (texture) {
     const envMap = pmremGenerator.fromEquirectangular(texture).texture;
     scene.environment = envMap;
@@ -56,7 +68,7 @@ function init() {
     pmremGenerator.dispose();
   });
 
-  const loader = new THREE.GLTFLoader();
+  const loader = new THREE.GLTFLoader(loadingManager);
   loader.load(
     "./edo-castle.glb",
     function (glb) {
@@ -66,7 +78,13 @@ function init() {
       model.position.set(0, -200, 0);
       scene.add(model);
     },
-    undefined,
+    // プログレス表示を追加
+    function (xhr) {
+      if (xhr.lengthComputable) {
+        const progress = (xhr.loaded / xhr.total) * 100;
+        loadingProgress.textContent = `${Math.floor(progress)}%`;
+      }
+    },
     function (error) {
       console.error(error);
     }

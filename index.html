@@ -24,11 +24,48 @@
         width: 100vw;
         height: 100vh;
       }
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      .loading-spinner {
+        width: 64px;
+        height: 64px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      .loading-progress {
+        color: white;
+        margin-top: 16px;
+        font-size: 18px;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
   <body>
     <canvas id="myCanvas"></canvas>
-
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="loading-spinner"></div>
+      <div class="loading-progress">0%</div>
+    </div>
     <script src="./js/script.js"></script>
   </body>
 </html>
