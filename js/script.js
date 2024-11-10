@@ -171,8 +171,8 @@ function init() {
 
   window.addEventListener("resize", onWindowResize);
   function onWindowResize() {
-    renderer.setSize(window.innerWidth, window.innerHeight * 0.9);
-    camera.aspect = window.innerWidth / (window.innerHeight * 0.9);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
   }
 }
